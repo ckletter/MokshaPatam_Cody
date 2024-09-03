@@ -1,9 +1,10 @@
 Name: YOUR NAME HERE
 
-| Date    |  Time  |                                     Update |
-|:--------|:------:|-------------------------------------------:|
-| April 5 | 9-10pm | I tried to write abstract, efficient code. |
-|         |        |                                            |
+| Date        |    Time     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Update |
+|:------------|:-----------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| April 5     |   9-10pm    |                                                                                                                                                                                                                                                                                                                                                                                                                                                         I tried to write abstract, efficient code. |
+| September 2 |  4-4:30pm   | I have been tackling this problem recursively so far. I decided to focus on the ladders (not thinking about snakes for now), where I am looping through each ladder and doing a recursive call with that ladder (going down that route) to see if it is the fastest way, keeping track of the number of rolls as I go. After I tried all the possible combinations of going up ladders, I will compare the rolls to see which way is fastest. After that, I will start to consider snakes as well. |
+| Sept 2      | 4:30-5:00pm |   I think I am VERY VERY close. I think my algorithm is correct (ignoring snakes) in trying to determine the number of rolls. I am still using a recursive method that tries a certain ladder as well as a for loop to try each possible ladder. Unfortunately, my code is only returning one roll size number instead of a whole series of combinations (which we can then check the lowest number for our solution). I look forward to class where I can check my answer and revise my solution. |
 
 
 To add a new row to the table, click into a cell and then hit shift-enter.
