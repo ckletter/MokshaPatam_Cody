@@ -29,23 +29,38 @@ public class MokshaPatam {
         // initialize new array lookup table to find starts of snakes and ladders
         int[] snakeLadderStarts = new int[boardsize];
         for (int i = 0; i < ladders.length; i++) {
-            snakeLadderStarts[ladders[i][0]] = ladders[i][1];
+            snakeLadderStarts[ladders[i][0] - 1] = ladders[i][1];
         }
+        for (int j = 0; j < snakes.length; j++) {
+            snakeLadderStarts[snakes[j][0] - 1] = snakes[j][1];
+        }
+        int rolls = tryBFS(lastSquare, currentSquare, 0, bfsQueue, snakeLadderStarts, alreadyExplored);
+        return rolls;
     }
-    public static int tryBFS(int lastSquare, int currentSquare, int numRolls, Queue<Integer> bfsQueue) {
-        // Base case - if lastSquare is reached, return number of rolls used
-        if (currentSquare == lastSquare) {
+    public static int tryBFS(int lastSquare, int currentSquare, int numRolls, Queue<Integer> bfsQueue, int[] snakeLadderStarts, ArrayList<Integer> alreadyExplored) {
+        // Base case - if lastSquare is reached or surpassed, return number of rolls used
+        if (currentSquare >= lastSquare) {
             return numRolls;
         }
         for (int i = 1; i < 7; i++) {
-            if (isSnake()) {
-                // Do stuff
+            int nextSquare;
+            // Check to make sure new square not out of bounds
+            if (currentSquare + i >= 100) {
+                return numRolls + 1;
             }
-            else if (isLadder()) {
-
+            if (snakeLadderStarts[currentSquare + i - 1] != 0) {
+                nextSquare = snakeLadderStarts[currentSquare + i];
             }
-            // Add next possible roll to queue
-            bfsQueue.add(currentSquare + i);
+            else {
+                nextSquare = currentSquare + i;
+            }
+            // Add next square to queue only if it is not already explored and not in queue already
+            // Add next square to list of already explored squares
+            if (!alreadyExplored.contains(nextSquare)) {
+                // Add next possible roll to queue
+                bfsQueue.add(nextSquare);
+                alreadyExplored.add(nextSquare);
+            }
         }
         // If there are no nodes left in the queue, return -1 signaling we are in a loop
         if (bfsQueue.peek() == null) {
@@ -54,11 +69,6 @@ public class MokshaPatam {
         // Increment rolls count by 1
         numRolls += 1;
         int nextNode = bfsQueue.remove();
-        return tryBFS(lastSquare, nextNode, numRolls, bfsQueue);
-    }
-    public static boolean isSnake() {
-    }
-    public static boolean isLadder() {
-
+        return tryBFS(lastSquare, nextNode, numRolls, bfsQueue, snakeLadderStarts, alreadyExplored);
     }
 }
