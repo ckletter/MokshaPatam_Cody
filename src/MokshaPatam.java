@@ -14,61 +14,62 @@ import java.util.Queue;
  */
 
 public class MokshaPatam {
-
-    /**
-     * TODO: Complete this function, fewestMoves(), to return the minimum number of moves
-     *  to reach the final square on a board with the given size, ladders, and snakes.
-     */
     public static int fewestMoves(int boardsize, int[][] ladders, int[][] snakes) {
         int currentSquare = 1;
-        int lastSquare = boardsize * boardsize;
-        int ladderLength = ladders.length;
-        int snakesLength = snakes.length;
         Queue<Integer> bfsQueue = new LinkedList<Integer>();
-        ArrayList<Integer> alreadyExplored = new ArrayList<Integer>();
-        // initialize new array lookup table to find starts of snakes and ladders
-        int[] snakeLadderStarts = new int[boardsize];
+        // initialize new association array lookup table to find starts of snakes and ladders
+        int[] snakeLadderStarts = new int[boardsize + 1];
+        // fill snake ladder association array with ladders start/end pairs
         for (int i = 0; i < ladders.length; i++) {
-            snakeLadderStarts[ladders[i][0] - 1] = ladders[i][1];
+            snakeLadderStarts[ladders[i][0]] = ladders[i][1];
         }
+        // fill snake ladder association array with snake start/end pairs
         for (int j = 0; j < snakes.length; j++) {
-            snakeLadderStarts[snakes[j][0] - 1] = snakes[j][1];
+            snakeLadderStarts[snakes[j][0]] = snakes[j][1];
         }
-        int rolls = tryBFS(lastSquare, currentSquare, 0, bfsQueue, snakeLadderStarts, alreadyExplored);
-        return rolls;
-    }
-    public static int tryBFS(int lastSquare, int currentSquare, int numRolls, Queue<Integer> bfsQueue, int[] snakeLadderStarts, ArrayList<Integer> alreadyExplored) {
-        // Base case - if lastSquare is reached or surpassed, return number of rolls used
-        if (currentSquare >= lastSquare) {
-            return numRolls;
-        }
-        for (int i = 1; i < 7; i++) {
-            int nextSquare;
-            // Check to make sure new square not out of bounds
-            if (currentSquare + i >= 100) {
-                return numRolls + 1;
+        // initialize association array lookup tables for roll counts and visited squares
+        int[] rollCounts = new int[boardsize + 1];
+        int[] isVisited = new int[boardsize + 1];
+        // add first square to queue
+        bfsQueue.add(currentSquare);
+        // loop until the queue is empty
+        while (!bfsQueue.isEmpty()) {
+            // If last square has been reached, return rolls made
+            if (currentSquare == boardsize) {
+                return rollCounts[currentSquare];
             }
-            if (snakeLadderStarts[currentSquare + i - 1] != 0) {
-                nextSquare = snakeLadderStarts[currentSquare + i];
+            // Loop through all 6 rolls
+            for (int i = 1; i < 7; i++) {
+                int nextSquare;
+                // If we are 1 roll away from the final square, return one more than rolls to get to current square
+                if (currentSquare + i == boardsize) {
+                    return rollCounts[currentSquare] + 1;
+                }
+                // If the square to roll to is the start of a snake or ladder, change the corresponding square to its end
+                else if (snakeLadderStarts[currentSquare + i] != 0) {
+                    nextSquare = snakeLadderStarts[currentSquare + i];
+                }
+                // The next square to go to for the specific roll (not rolling to a snake or ladder)
+                else {
+                    nextSquare = currentSquare + i;
+                }
+                // Add next square to queue only if it is not already explored and not in queue already
+                if (isVisited[nextSquare] == 0) {
+                    // Add next possible roll to queue
+                    bfsQueue.add(nextSquare);
+                    // Change value of nextSquare in visited array to 1 indicating that it has been seen
+                    isVisited[nextSquare] = 1;
+                    // Increment rolls count of the next square to one more than its parent square (current square)
+                    rollCounts[nextSquare] = rollCounts[currentSquare] + 1;
+                }
             }
-            else {
-                nextSquare = currentSquare + i;
+            // If there are no nodes left in the queue, return -1 signaling we are in a loop
+            if (bfsQueue.peek() == null) {
+                return -1;
             }
-            // Add next square to queue only if it is not already explored and not in queue already
-            // Add next square to list of already explored squares
-            if (!alreadyExplored.contains(nextSquare)) {
-                // Add next possible roll to queue
-                bfsQueue.add(nextSquare);
-                alreadyExplored.add(nextSquare);
-            }
+            currentSquare = bfsQueue.remove();
         }
         // If there are no nodes left in the queue, return -1 signaling we are in a loop
-        if (bfsQueue.peek() == null) {
-            return -1;
-        }
-        // Increment rolls count by 1
-        numRolls += 1;
-        int nextNode = bfsQueue.remove();
-        return tryBFS(lastSquare, nextNode, numRolls, bfsQueue, snakeLadderStarts, alreadyExplored);
+        return -1;
     }
 }
