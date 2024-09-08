@@ -29,7 +29,7 @@ public class MokshaPatam {
         }
         // initialize association array lookup tables for roll counts and visited squares
         int[] rollCounts = new int[boardsize + 1];
-        int[] isVisited = new int[boardsize + 1];
+        boolean[] isVisited = new boolean[boardsize + 1];
         // add first square to queue
         bfsQueue.add(currentSquare);
         // loop until the queue is empty
@@ -54,11 +54,11 @@ public class MokshaPatam {
                     nextSquare = currentSquare + i;
                 }
                 // Add next square to queue only if it is not already explored and not in queue already
-                if (isVisited[nextSquare] == 0) {
+                if (!isVisited[nextSquare]) {
                     // Add next possible roll to queue
                     bfsQueue.add(nextSquare);
                     // Change value of nextSquare in visited array to 1 indicating that it has been seen
-                    isVisited[nextSquare] = 1;
+                    isVisited[nextSquare] = true;
                     // Increment rolls count of the next square to one more than its parent square (current square)
                     rollCounts[nextSquare] = rollCounts[currentSquare] + 1;
                 }
